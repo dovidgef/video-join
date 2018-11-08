@@ -1,0 +1,21 @@
+eac3to v3.27
+command line: ".\eac3to\eac3to"  ".\261 Hilchos Boneh17105 P1.MTS"+".\261 Hilchos Boneh17105 P2.MTS" ".\00.ac3" 
+------------------------------------------------------------------------------
+M2TS, 1 video track, 1 audio track, 1:00:03, 50i
+1: h264/AVC, 1440x1080 50i (16:9)
+2: AC3, 5.1 channels, 384kbps, 48kHz
+Track 2 is used for destination file "00.ac3".
+[a02] Extracting audio track number 2...
+[a02] Creating file ".\00.ac3"...
+[a02] [0:26:51] The source file seems to be damaged (sync byte missing).  <WARNING>
+[a02] [0:26:51] The source file seems to be damaged (transport error indicated).  <WARNING>
+[a02] [0:26:51] The source file seems to be damaged (sync byte missing).  <WARNING>
+[a02] [0:26:51] The source file seems to be damaged (discontinuity).  <WARNING>
+[a02] Audio has a gap of 496ms at playtime 0:14:15.  <WARNING>
+[a02] Audio has a gap of 32ms at playtime 0:26:51.  <WARNING>
+[a02] Starting 2nd pass...
+[a02] Realizing (E-)AC3 gaps...
+[a02] Creating file ".\00.ac3"...
+Video track 1 contains 180126 fields.
+eac3to processing took 56 seconds.
+Done.
