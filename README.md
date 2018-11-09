@@ -8,7 +8,7 @@ This tool works on Windows only.
 2. Clone the repo 
 ```
 git clone https://github.com/dovidgef/video-join.git
-cd svideo-join
+cd video-join
 ```
 3. Install dependencies `npm install`
 4. Add binary to global path `npm link`
