@@ -5,6 +5,9 @@ console.log('Video Join Tool');
 const glob = require("glob");
 const cmd = require('node-cmd');
 const fs = require('fs');
+const psTree = require('ps-tree');
+
+let cmd_one_proc, cmd_two_proc;
 
 // options is optional
 glob("**/*.[mM][tT][sS]", {}, function (er, files) {
@@ -18,6 +21,8 @@ glob("**/*.[mM][tT][sS]", {}, function (er, files) {
       console.log(files[i]);
       mtsList += '".\\' + files[i] + '"+';
     }
+    // Add white space
+    console.log("\n\n");
     mtsList = mtsList.slice(0, -1);
 
 
@@ -39,54 +44,59 @@ glob("**/*.[mM][tT][sS]", {}, function (er, files) {
     let cmd_one = "eac3to" + " " + mtsList + " " + audioFile;
     let cmd_two = "tsMuxeR" + " " + metaFile + " " + videoFileName;
 
-    let cmd_one_proc = cmd.get(
-      cmd_one,
-      function (err, data, stderr) {
+    cmd_one_proc = cmd.get(cmd_one, function (err, data, stderr) {
         if (err || stderr) {
           console.log("Error: " + err + " stderr: " + stderr);
         }
         else {
-          // console.log(data);
-          let cmd_two_proc = cmd.get(
-            cmd_two,
-            function (err, data, stderr) {
+          cmd_two_proc = cmd.get(cmd_two, function (err, data, stderr) {
               if (err || stderr) {
                 console.log("Error: " + err + " stderr: " + stderr);
               }
               else {
-                // console.log(data);
                 // Delete extra files
                 console.log("Deleting Files!");
                 fs.unlinkSync("00.ac3");
                 fs.unlinkSync(audioLogFile);
-                fs.unlinkSync(metaFile);
+                fs.unlinkSync("00.meta");
                 // Change to MTS extension after finished muxing
                 fs.renameSync(videoFileName.slice(1, -1), videoFileName.slice(1, -3) + "MTS");
               }
-
             }
           );
           // Print output as it is sent
-          cmd_two_proc.stdout.on(
-            'data',
-            output
-          );
+          cmd_two_proc.stdout.on('data', output);
         }
       }
     );
 
     // Print output as it is sent
     let data_line = '';
-    cmd_one_proc.stdout.on(
-      'data',
-      output
-    );
+    cmd_one_proc.stdout.on('data', output);
 
     function output(data) {
       data_line += data;
+      // Output whole lines only
       if (data_line[data_line.length - 1] === '\n') {
-        console.log(data_line);
+        // Check and handle dirty bytes error
+        if (data_line.includes('PES')){
+          if(cmd_one_proc) {
+            // console.log("process:", util.inspect(cmd_one_proc));
+            cmd_one_proc.stdout.removeListener('data', output);
+            psTree(cmd_one_proc.pid, function (err, children) {
+                children.map(function (p) {
+                  // noinspection JSUnresolvedVariable
+                  process.kill(p.PID);
+                });
+                throw "Error: video file has dirty PES bytes, please manually join files using tsMuxers GUI";
+            });
+          }
+        } else {
+            console.log(data_line.trim(), '\n');
+        }
       }
     }
   }
 });
+
+
