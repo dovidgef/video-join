@@ -10,7 +10,7 @@ const psTree = require('ps-tree');
 let cmd_one_proc, cmd_two_proc;
 
 // options is optional
-glob("**/*.[mM][tT][sS]", {}, function (er, files) {
+glob("**/*.[mM][tT][sS]", {}, (er, files) => {
   // files is an array of file names with MTS extension.
 
   // Only attempt to combine videos when more than one in folder
@@ -44,12 +44,12 @@ glob("**/*.[mM][tT][sS]", {}, function (er, files) {
     let cmd_one = "eac3to" + " " + mtsList + " " + audioFile;
     let cmd_two = "tsMuxeR" + " " + metaFile + " " + videoFileName;
 
-    cmd_one_proc = cmd.get(cmd_one, function (err, data, stderr) {
+    cmd_one_proc = cmd.get(cmd_one, (err, data, stderr) => {
         if (err || stderr) {
           console.log("Error: " + err + " stderr: " + stderr);
         }
         else {
-          cmd_two_proc = cmd.get(cmd_two, function (err, data, stderr) {
+          cmd_two_proc = cmd.get(cmd_two, (err, data, stderr) => {
               if (err || stderr) {
                 console.log("Error: " + err + " stderr: " + stderr);
               }
@@ -83,8 +83,8 @@ glob("**/*.[mM][tT][sS]", {}, function (er, files) {
           if(cmd_one_proc) {
             // console.log("process:", util.inspect(cmd_one_proc));
             cmd_one_proc.stdout.removeListener('data', output);
-            psTree(cmd_one_proc.pid, function (err, children) {
-                children.map(function (p) {
+            psTree(cmd_one_proc.pid, (err, children) => {
+                children.map(p => {
                   // noinspection JSUnresolvedVariable
                   process.kill(p.PID);
                 });
